@@ -10,12 +10,12 @@ app.use(express.static(path.join(__dirname, 'static'), {
         }
     }
 }));
-
+app.set('view engine', 'ejs')
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
+    res.render('index')
 });
 
 
 app.listen(port, () => {
-    console.log(`Server is running on ${port}`);
+    console.log(`Web server is running on ${port}`);
 });

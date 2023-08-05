@@ -1,62 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>SQL Query Execution</title>
+<title>SQL Query Execution</title>
 </head>
 <body>
-  <form id="queryForm">
-    <label for="query">Enter SQL Query:</label>
-    <input type="text" id="query" name="query" required>
-    <button type="submit">Execute</button>
-  </form>
-  <div id="results"></div>
-  <script>
-    document.getElementById('queryForm').addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    const query = formData.get('query');
+	<form id="queryForm">
+		<label for="query">Enter SQL Query:</label>
+		<input type="text" id="query" name="query" required>
+		<button type="submit">Execute</button>
+	</form>
+	<div id="results"></div>
+	<script>
+		document.getElementById('queryForm').addEventListener('submit', async (event) => {
+		event.preventDefault();
+		const formData = new FormData(event.target);
+		const query = formData.get('query');
 
-    try {
-      const response = await fetch('http://localhost:3000/execute', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ query }),
-      });
+		try {
+			const response = await fetch('http://localhost:3000/execute', {
+				method: 'POST',
+				headers: {
+				'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ query }),
+			});
 
-      if (!response.ok) {
-        throw new Error('Query execution failed.');
-      }
-
-      const data = await response.json();
-      const resultsDiv = document.getElementById('results');
-      resultsDiv.innerHTML = '';
-      const table = document.createElement('table');
-      const header = table.createTHead();
-      const headerRow = header.insertRow();
-      for (const column of data.columns) {
-        const headerCell = headerRow.insertCell();
-        headerCell.innerHTML = column;
-      }
-      const body = table.createTBody();
-      for (const row of data.rows) {
-        const bodyRow = body.insertRow();
-        for (const column of data.columns) {
-          const bodyCell = bodyRow.insertCell();
-          bodyCell.innerHTML = row[column];
-        }
-      }
-      resultsDiv.appendChild(table);
-
-    } catch (error) {
-      console.error('Error executing the query:', error.message);
-      // Display error message to the user
-      let errorDiv = document.createElement('div');
-      errorDiv.innerHTML = error.message;
-      document.body.appendChild(errorDiv);
-    }
-  });
-  </script>
-</body>
+			if (!response.ok) {
+				throw new Error('Query execution failed.');
+			}
+			console.log(response);
+			const data = await response.json();
+			const resultsDiv = document.getElementById('results');
+			resultsDiv.innerHTML = '';
+			resultsDiv.appendChild(table);
+		} catch (error) {
+			console.error('Error executing the query:', error.message);
+			// Display error message to the user
+			let errorDiv = document.createElement('div');
+			errorDiv.innerHTML = error.message;
+			document.body.appendChild(errorDiv);
+		}
+		});
+	</script>
+	</body>
 </html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SQL Query Execution</title>
+</head>
+<body>
+	<form id="queryForm">
+		<label for="query">Enter SQL Query:</label>
+		<input type="text" id="query" name="query" required>
+		<button type="submit" onclick="emptyField()">Execute</button>
+	</form>
+	<div id="results">
+		
+	</div>
+	<script>
+		document.getElementById('queryForm').addEventListener('submit', async (event) => {
+		event.preventDefault();
+		const formData = new FormData(event.target);
+		const query = formData.get('query');
+		let results;
+		try {
+			const response = await fetch('http://localhost:3000/execute', {
+				method: 'POST',
+				headers: {
+				'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ query }),
+			});
+			if (!response.ok) {
+				throw new Error('Query execution failed.');
+			}
+			console.log(response);
+			let resultsDiv = document.getElementById('results');
+			results = await response.json();
+			console.log(results);
+			let table = document.createElement('table');
+			let header = document.createElement('tr');
+			for (let key in results[0]) {
+				let th = document.createElement('th');
+				th.innerHTML = key;
+				header.appendChild(th);
+			}
+			table.appendChild(header);
+			for (let row of results) {
+				let tr = document.createElement('tr');
+				for (let key in row) {
+					let td = document.createElement('td');
+					td.innerHTML = row[key];
+					tr.appendChild(td);
+				}
+				table.appendChild(tr);
+			}
+			resultsDiv.appendChild(table);
+		} catch (error) {
+			console.error('Error executing the query:', error.message);
+			let errorDiv = document.createElement('div');
+			if (!results[Symbol.iterator]) {
+				errorDiv.innerHTML = results.statusText;
+			} else {
+				errorDiv.innerHTML = error.message;
+			}
+			errorDiv.innerHTML = error.message;
+			document.body.appendChild(errorDiv);
+		}
+		});
+	</script>
+	<script>
+		const emptyField = () => {
+			setTimeout(clearField, 10);
+		}
+		const clearField = () => {
+			document.getElementById("query").value = "";
+		}
+	</script>
+	</script>
+	</body>
+</html>
